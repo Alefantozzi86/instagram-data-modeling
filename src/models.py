@@ -1,6 +1,6 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -8,23 +8,66 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    user_name = Column(String(50))
+    email = Column(String(100), nullable=False)
+    phone = Column(Integer, nullable=False)
+    password = Column(String(100), nullable=False)
+    create_at = Column(DateTime)
+
+class Likes(Base):
+    __tablename__ = 'likes'  
+    id = Column(Integer, primary_key=True) 
+    date = Column(DateTime, nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    post_id = Column(Integer, ForeignKey('post.id')) 
+
+class Followers(Base):
+    __tablename__ = 'followers'
+    id = Column(Integer, primary_key=True)
+    user_from_id = Column(Integer,ForeignKey('user.id'),primary_key=True)
+    user_to_id = Column(Integer,ForeignKey('user.id'),primary_key=True)
+
+class Coment(Base):
+    __tablename__= 'coment'
+    id = Column(Integer, primary_key=True)
+    coment_text = Column(String(500))
+    author_id = Column(Integer,ForeignKey('user.id'), primary_key=True)
+    post_id = Column(Integer,ForeignKey('post.id'), primary_key=True)
+
+class Post(Base):
+    __tablename__ = 'post'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer,ForeignKey('user.id'), primary_key=True)
+
+class Media(Base):
+    __tablename__ = 'media'
+    id = Column(Integer, primary_key=True)
+    type = Column(String(250))
+    url = Column(String(250))
+    post_id = Column(Integer,ForeignKey('post.id'), primary_key=True)  
+
+    
+
+#class Person(Base):
+   # __tablename__ = 'person'
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    #id = Column(Integer, primary_key=True)
+    #name = Column(String(250), nullable=False)
 
-class Address(Base):
-    __tablename__ = 'address'
+#class Address(Base):
+ #   __tablename__ = 'address'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    ###id = Column(Integer, primary_key=True)
+    ##street_name = Column(String(250))
+    ##street_number = Column(String(250))
+    #post_code = Column(String(250), nullable=False)
+    #person_id = Column(Integer, ForeignKey('person.id'))
+    #person = relationship(Person)
 
     def to_dict(self):
         return {}
